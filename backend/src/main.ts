@@ -6,6 +6,25 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
+  // --- INÍCIO DO CÓDIGO DE DEPURAÇÃO ---
+  // Acessa o servidor HTTP interno da aplicação
+  const server = app.getHttpServer();
+  // Acessa o roteador que contém a lista de rotas
+  const router = server._events.request._router;
+
+  console.log('--- ROTAS REGISTRADAS NA APLICAÇÃO ---');
+  router.stack.forEach(function(layer) {
+    if (layer.route) {
+      // Imprime o caminho e os métodos (GET, POST, etc.)
+      const path = layer.route.path;
+      const methods = Object.keys(layer.route.methods).join(', ').toUpperCase();
+      console.log(`${methods} ${path}`);
+    }
+  });
+  console.log('------------------------------------');
+  // --- FIM DO CÓDIGO DE DEPURAÇÃO ---
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
