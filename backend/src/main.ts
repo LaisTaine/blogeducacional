@@ -25,7 +25,9 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LogginInterceptor());
 
   app.enableCors({
-    origin: 'http://localhost:3001', 
+    origin: [
+      'http://localhost:3001', 'https://blogeducacional.onrender.com/'
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
     credentials: true, 
   });
