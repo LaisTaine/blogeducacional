@@ -1,19 +1,31 @@
-// Em: src/app.module.ts (VERSÃO DE TESTE)
-
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { PostsModule } from './posts/posts.module';
+import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Necessário para as variáveis de ambiente
+      isGlobal: true,
     }),
-    UserModule, // O AuthModule depende do UserModule, então precisamos dele
-    AuthModule, // <-- O MÓDULO QUE ESTAMOS TESTANDO
+    PostsModule,
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
+    UserModule, 
+    AuthModule,  
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [
+    AppService,
+  ],
 })
 export class AppModule {}
